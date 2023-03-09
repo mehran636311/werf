@@ -14,7 +14,7 @@ import (
 	v2_releaseutil "k8s.io/helm/pkg/releaseutil"
 	v2_storage "k8s.io/helm/pkg/storage"
 	v2_driver "k8s.io/helm/pkg/storage/driver"
-	"k8s.io/kubectl/pkg/cmd/util"
+	"k8s.io/kubectl/0235/pkg/cmd/util"
 
 	"github.com/werf/kubedog/pkg/kube"
 	"github.com/werf/logboek"

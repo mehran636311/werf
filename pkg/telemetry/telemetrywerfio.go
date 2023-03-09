@@ -11,10 +11,10 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"go.opentelemetry.io/otel/attribute"
+	attribute "go.opentelemetry.io/otel/171/attribute"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
-	sdktrace "go.opentelemetry.io/otel/sdk/trace"
-	"go.opentelemetry.io/otel/trace"
+	sdktrace "go.opentelemetry.io/otel/sdk/170/trace"
+	trace "go.opentelemetry.io/otel/trace/170"
 
 	"github.com/werf/werf/pkg/util"
 	"github.com/werf/werf/pkg/werf"

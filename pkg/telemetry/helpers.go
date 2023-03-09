@@ -5,7 +5,7 @@ import (
 	neturl "net/url"
 	"time"
 
-	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
+	otlptrace "go.opentelemetry.io/otel/exporters/otlp/otlptrace/130"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
 )
 

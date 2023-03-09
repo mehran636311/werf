@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	"go.opentelemetry.io/otel"
+	otel "go.opentelemetry.io/otel/171"
 
 	"github.com/werf/werf/pkg/util"
 	"github.com/werf/werf/pkg/werf"

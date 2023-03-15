@@ -51,52 +51,76 @@ var (
 )
 
 func main()  {
-	valuesMap := map[string]interface{}{}
+	optionUsage := map[string]interface{}{}
+	optionValuesUsage := map[string]interface{}{}
 	for _, usage := range valuesUsage {
-		usageMap := map[string]interface{}{}
+		optionVersion := map[string]interface{}{}
+		optionValuesVersion := map[string]interface{}{}
 		for _, version := range valuesVersion {
 			// инструкции CI для 1.1 не будет
 			if version == version11 && usage == usageCI {
 				continue
 			}
 
-			versionMap := map[string]interface{}{}
+			optionChannel := map[string]interface{}{}
+			optionValuesChannel := map[string]interface{}{}
 			for _, channel := range valuesChannel {
-				channelMap := map[string]interface{}{}
+
+				optionBackend := map[string]interface{}{}
+				optionValuesBackend := map[string]interface{}{}
 				for _, backend := range valuesBackend {
-					backendMap := map[string]interface{}{}
+
+					optionCI := map[string]interface{}{}
+					optionValuesCI := map[string]interface{}{}
 					for _, ci := range valuesCI {
-						ciMap := map[string]interface{}{}
-						for _, executor := range valuesExecutor {
-							executorMap := map[string]interface{}{}
-							for _, os := range valuesOS {
-								osMap := map[string]interface{}{}
-								for _, projectType := range valuesProjectType {
-									projectTypeMap := map[string]interface{}{}
-									osMap[projectType] = projectTypeMap
-								}
+						optionExecutor := generateOption(nameExecutor, valuesExecutor, func() map[string]interface{} {
+							return generateOption(nameOS, valuesOS, func() map[string]interface{} {
+								return generateOption(nameProjectType, valuesProjectType, nil)
+							})
+						})
 
-								executorMap[os] = osMap
-							}
-
-							ciMap[executor] = executorMap
-						}
-
-						backendMap[ci] = ciMap
+						optionValuesCI[ci] = optionExecutor
 					}
 
-					channelMap[backend] = backendMap
+					optionCI["option"] = nameCI
+					optionCI["values"] = optionValuesCI
+					optionValuesBackend[backend] = optionCI
 				}
 
-				versionMap[channel] = channelMap
+				optionBackend["option"] = nameBackend
+				optionBackend["values"] = optionValuesBackend
+				optionValuesChannel[channel] = optionBackend
 			}
 
-			usageMap[version] = versionMap
+			optionChannel["option"] = nameChannel
+			optionChannel["values"] = optionValuesChannel
+			optionValuesVersion[version] = optionChannel
 		}
 
-		valuesMap[usage] = usageMap
+		optionVersion["option"] = nameVersion
+		optionVersion["values"] = optionValuesVersion
+		optionValuesUsage[usage] = optionVersion
+	}
+	optionUsage["option"] = nameUsage
+	optionUsage["values"] = optionValuesUsage
+
+	jsonString, _ := json.MarshalIndent(optionUsage, "", "    ")
+	fmt.Println(string(jsonString))
+}
+
+func generateOption(name string, values []string, optionValuesFunc func() map[string]interface{}) map[string]interface{} {
+	option := map[string]interface{}{}
+	optionValues := map[string]interface{}{}
+
+	for _, value := range values {
+		if optionValuesFunc != nil {
+			optionValues[value] = optionValuesFunc()
+		} else {
+			optionValues[value] = nil
+		}
 	}
 
-	jsonString, _ := json.MarshalIndent(valuesMap, "", "    ")
-	fmt.Println(string(jsonString))
+	option["option"] = name
+	option["values"] = optionValues
+	return option
 }

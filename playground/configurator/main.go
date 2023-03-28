@@ -52,11 +52,14 @@ var (
 
 func main() {
 	optionUsage := generateOption(nameUsage, valuesUsage, func(vUsage string) interface{} {
-		return generateOption(nameVersion, valuesVersion, func(vVersion string) interface{} {
-			if vUsage == usageLocal && vVersion == version11 {
-				return nil
-			}
+		var valuesLocalVersion []string
+		if vUsage == usageCI {
+			valuesLocalVersion = []string{version11}
+		} else {
+			valuesLocalVersion = valuesVersion
+		}
 
+		return generateOption(nameVersion, valuesLocalVersion, func(vVersion string) interface{} {
 			return generateOption(nameChannel, valuesChannel, func(string) interface{} {
 				return generateOption(nameBackend, valuesBackend, func(string) interface{} {
 					return generateOption(nameCI, valuesCI, func(string) interface{} {
@@ -78,6 +81,10 @@ func main() {
 func generateOption(name string, values []string, optionValuesFunc func(value string) interface{}) interface{} {
 	option := map[string]interface{}{}
 	optionValues := map[string]interface{}{}
+
+	if len(values) == 0 {
+		values = []string{":DISABLED:"}
+	}
 
 	for _, value := range values {
 		if optionValuesFunc != nil {
